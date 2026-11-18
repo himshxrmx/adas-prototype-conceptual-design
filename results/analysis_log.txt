@@ -1,0 +1,119 @@
+                     camera                                                    strategy  centre_crop_fov_deg  car (1.7 m wide)  two-wheeler (0.7 m)  pedestrian (0.5 m)  cow, head-on (0.6 m)
+0  2 MP, 1920 px, 100° HFOV                                full frame resized to 640 px                100.0              31.2                 12.8                 9.2                  11.0
+1  2 MP, 1920 px, 100° HFOV  dual-scale: full frame at 640 + native 1280 px centre crop                 66.7              93.5                 38.5                27.5                  33.0
+2   2 MP, 1920 px, 60° HFOV                                full frame resized to 640 px                 60.0              51.9                 21.4                15.3                  18.3
+3   2 MP, 1920 px, 60° HFOV  dual-scale: full frame at 640 + native 1280 px centre crop                 40.0             155.8                 64.2                45.8                  55.0
+4   3 MP, 2048 px, 60° HFOV                                full frame resized to 640 px                 60.0              51.9                 21.4                15.3                  18.3
+5   3 MP, 2048 px, 60° HFOV  dual-scale: full frame at 640 + native 1280 px centre crop                 37.5             166.2                 68.4                48.9                  58.7
+6  8 MP, 3840 px, 120° HFOV                                full frame resized to 640 px                120.0              26.0                 10.7                 7.6                   9.2
+7  8 MP, 3840 px, 120° HFOV  dual-scale: full frame at 640 + native 1280 px centre crop                 40.0             155.8                 64.2                45.8                  55.0
+8   8 MP, 3840 px, 60° HFOV                                full frame resized to 640 px                 60.0              51.9                 21.4                15.3                  18.3
+9   8 MP, 3840 px, 60° HFOV  dual-scale: full frame at 640 + native 1280 px centre crop                 20.0             311.7                128.3                91.7                 110.0
+   threshold_s  crash_rate_pct  crashes_avoided_pct  mean_impact_kmh  crash_rate_wet_pct  nuisance_alerts_per_hour  nuisance_if_drivers_closer  severe_crash_pct
+0          1.5           55.36                  0.8             35.4               67.58                      0.02                        0.09             36.49
+1          1.8           54.00                  3.3             34.3               67.27                      0.10                        0.39             33.52
+2          2.0           52.74                  5.5             33.4               66.72                      0.25                        0.77             31.36
+3          2.2           51.20                  8.3             32.6               66.02                      0.49                        1.35             29.14
+4          2.4           49.76                 10.9             31.8               65.20                      0.85                        2.13             26.98
+5          2.6           48.23                 13.6             30.9               64.36                      1.35                        3.13             24.87
+6          2.8           46.38                 16.9             30.2               63.62                      1.99                        4.24             22.91
+7          3.0           44.56                 20.2             29.5               62.78                      2.81                        5.47             21.02
+8          3.5           39.94                 28.4             27.9               60.65                      5.23                        8.74             16.79
+baseline 55.82 36.8 wet 67.62
+                        condition                         detector  recall_pct  false_alarms_per_hour  median_detection_s
+0               IR camera, normal           PERCLOS > 8% over 60 s       100.0                  19.45               126.2
+1               IR camera, normal          PERCLOS > 10% over 60 s        99.2                   4.50               186.7
+2               IR camera, normal          PERCLOS > 12% over 60 s        87.5                   0.90               251.3
+3               IR camera, normal          PERCLOS > 15% over 60 s        72.5                   0.00               311.4
+4               IR camera, normal          PERCLOS > 20% over 60 s        35.0                   0.00               373.2
+5               IR camera, normal          PERCLOS > 25% over 60 s         7.5                   0.00               383.3
+6               IR camera, normal  microsleep: eyes closed > 1.0 s        98.3                  14.78               105.8
+7               IR camera, normal  microsleep: eyes closed > 1.5 s        78.3                   0.48               275.1
+8         sunglasses or harsh sun           PERCLOS > 8% over 60 s       100.0                  60.30                70.7
+9         sunglasses or harsh sun          PERCLOS > 10% over 60 s       100.0                  28.60               109.1
+10        sunglasses or harsh sun          PERCLOS > 12% over 60 s       100.0                  10.25               171.3
+11        sunglasses or harsh sun          PERCLOS > 15% over 60 s        91.7                   2.50               254.6
+12        sunglasses or harsh sun          PERCLOS > 20% over 60 s        55.0                   0.08               323.8
+13        sunglasses or harsh sun          PERCLOS > 25% over 60 s        21.7                   0.00               392.6
+14        sunglasses or harsh sun  microsleep: eyes closed > 1.0 s        99.2                  29.82                64.7
+15        sunglasses or harsh sun  microsleep: eyes closed > 1.5 s        77.5                   1.63               275.8
+16      normal + head-pose gating           PERCLOS > 8% over 60 s       100.0                   6.78               156.2
+17      normal + head-pose gating          PERCLOS > 10% over 60 s        97.5                   1.17               208.9
+18      normal + head-pose gating          PERCLOS > 12% over 60 s        90.0                   0.18               254.5
+19      normal + head-pose gating          PERCLOS > 15% over 60 s        70.0                   0.00               320.9
+20      normal + head-pose gating          PERCLOS > 20% over 60 s        36.7                   0.00               369.1
+21      normal + head-pose gating          PERCLOS > 25% over 60 s        10.8                   0.00               391.4
+22      normal + head-pose gating  microsleep: eyes closed > 1.0 s        96.7                   1.67               190.2
+23      normal + head-pose gating  microsleep: eyes closed > 1.5 s        78.3                   0.08               285.4
+24  sunglasses + head-pose gating           PERCLOS > 8% over 60 s       100.0                  20.68               123.4
+25  sunglasses + head-pose gating          PERCLOS > 10% over 60 s        98.3                   4.72               190.9
+26  sunglasses + head-pose gating          PERCLOS > 12% over 60 s        91.7                   0.93               236.8
+27  sunglasses + head-pose gating          PERCLOS > 15% over 60 s        77.5                   0.08               308.5
+28  sunglasses + head-pose gating          PERCLOS > 20% over 60 s        28.3                   0.00               344.3
+29  sunglasses + head-pose gating          PERCLOS > 25% over 60 s         4.2                   0.00               391.2
+30  sunglasses + head-pose gating  microsleep: eyes closed > 1.0 s        98.3                   4.90               200.6
+31  sunglasses + head-pose gating  microsleep: eyes closed > 1.5 s        67.5                   0.15               298.6
+                                                  model  gflops_per_inference  fps  gops_per_s                            source
+0    Forward detector, YOLOv8s-class, full frame 640 px                 28.60   15       858.0   published (Ultralytics, 640 px)
+1  Forward detector, YOLOv8n-class, 1280 px centre crop                 10.44   15       313.2  scaled from 8.7 GFLOPs at 640 px
+2         Lane and road-edge segmentation (lightweight)                  4.00   15       120.0                           assumed
+3                               Driver face + landmarks                  1.00   30        60.0                           assumed
+4                         Eye-state and gaze classifier                  0.30   30        18.0                           assumed
+5                                  Phone-use classifier                  0.60    5         6.0                           assumed
+{
+ "production SoC (8 TOPS INT8)": {
+  "effective_gops": 2400.0,
+  "required_gops": 1375.2,
+  "load_pct": 57.3
+ },
+ "prototype module (~26 TOPS INT8)": {
+  "effective_gops": 7800.0,
+  "required_gops": 1375.2,
+  "load_pct": 17.6
+ }
+}
+{
+ "items": [
+  [
+   "AI SoC (NPU + CPU, typical / peak)",
+   4.5,
+   7.0
+  ],
+  [
+   "Forward camera + ISP",
+   0.6,
+   0.8
+  ],
+  [
+   "Driver camera + 940 nm IR LEDs",
+   0.8,
+   1.5
+  ],
+  [
+   "4G LTE + GNSS",
+   0.8,
+   2.5
+  ],
+  [
+   "Memory, eMMC, CAN, IMU",
+   0.6,
+   0.8
+  ],
+  [
+   "Audio amplifier + speaker",
+   0.2,
+   1.5
+  ],
+  [
+   "Power conversion losses (88% efficient)",
+   1.0,
+   1.9
+  ]
+ ],
+ "typical_w": 8.5,
+ "peak_w": 16.0,
+ "rth_c_per_w": 3.0,
+ "case_temp_typical_at_50c_cabin": 75.5,
+ "case_temp_peak_at_50c_cabin": 98.0,
+ "case_temp_parked_sun_70c_typical": 95.5
+}

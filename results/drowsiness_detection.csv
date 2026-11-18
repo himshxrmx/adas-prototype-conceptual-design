@@ -1,0 +1,33 @@
+condition,detector,recall_pct,false_alarms_per_hour,median_detection_s
+"IR camera, normal",PERCLOS > 8% over 60 s,100.0,19.45,126.2
+"IR camera, normal",PERCLOS > 10% over 60 s,99.2,4.5,186.7
+"IR camera, normal",PERCLOS > 12% over 60 s,87.5,0.9,251.3
+"IR camera, normal",PERCLOS > 15% over 60 s,72.5,0.0,311.4
+"IR camera, normal",PERCLOS > 20% over 60 s,35.0,0.0,373.2
+"IR camera, normal",PERCLOS > 25% over 60 s,7.5,0.0,383.3
+"IR camera, normal",microsleep: eyes closed > 1.0 s,98.3,14.78,105.8
+"IR camera, normal",microsleep: eyes closed > 1.5 s,78.3,0.48,275.1
+sunglasses or harsh sun,PERCLOS > 8% over 60 s,100.0,60.3,70.7
+sunglasses or harsh sun,PERCLOS > 10% over 60 s,100.0,28.6,109.1
+sunglasses or harsh sun,PERCLOS > 12% over 60 s,100.0,10.25,171.3
+sunglasses or harsh sun,PERCLOS > 15% over 60 s,91.7,2.5,254.6
+sunglasses or harsh sun,PERCLOS > 20% over 60 s,55.0,0.08,323.8
+sunglasses or harsh sun,PERCLOS > 25% over 60 s,21.7,0.0,392.6
+sunglasses or harsh sun,microsleep: eyes closed > 1.0 s,99.2,29.82,64.7
+sunglasses or harsh sun,microsleep: eyes closed > 1.5 s,77.5,1.63,275.8
+normal + head-pose gating,PERCLOS > 8% over 60 s,100.0,6.78,156.2
+normal + head-pose gating,PERCLOS > 10% over 60 s,97.5,1.17,208.9
+normal + head-pose gating,PERCLOS > 12% over 60 s,90.0,0.18,254.5
+normal + head-pose gating,PERCLOS > 15% over 60 s,70.0,0.0,320.9
+normal + head-pose gating,PERCLOS > 20% over 60 s,36.7,0.0,369.1
+normal + head-pose gating,PERCLOS > 25% over 60 s,10.8,0.0,391.4
+normal + head-pose gating,microsleep: eyes closed > 1.0 s,96.7,1.67,190.2
+normal + head-pose gating,microsleep: eyes closed > 1.5 s,78.3,0.08,285.4
+sunglasses + head-pose gating,PERCLOS > 8% over 60 s,100.0,20.68,123.4
+sunglasses + head-pose gating,PERCLOS > 10% over 60 s,98.3,4.72,190.9
+sunglasses + head-pose gating,PERCLOS > 12% over 60 s,91.7,0.93,236.8
+sunglasses + head-pose gating,PERCLOS > 15% over 60 s,77.5,0.08,308.5
+sunglasses + head-pose gating,PERCLOS > 20% over 60 s,28.3,0.0,344.3
+sunglasses + head-pose gating,PERCLOS > 25% over 60 s,4.2,0.0,391.2
+sunglasses + head-pose gating,microsleep: eyes closed > 1.0 s,98.3,4.9,200.6
+sunglasses + head-pose gating,microsleep: eyes closed > 1.5 s,67.5,0.15,298.6

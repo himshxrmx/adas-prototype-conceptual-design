@@ -1,0 +1,537 @@
+{
+  "camera_required_range_m": {
+    "urban 50 km/h, pedestrian": 37.5,
+    "highway 80 km/h, stopped car": 59.9,
+    "highway 100 km/h, stopped car": 75.1
+  },
+  "camera_ranges": [
+    {
+      "camera": "2 MP, 1920 px, 100\u00b0 HFOV",
+      "strategy": "full frame resized to 640 px",
+      "centre_crop_fov_deg": 100,
+      "car (1.7 m wide)": 31.2,
+      "two-wheeler (0.7 m)": 12.8,
+      "pedestrian (0.5 m)": 9.2,
+      "cow, head-on (0.6 m)": 11.0
+    },
+    {
+      "camera": "2 MP, 1920 px, 100\u00b0 HFOV",
+      "strategy": "dual-scale: full frame at 640 + native 1280 px centre crop",
+      "centre_crop_fov_deg": 66.7,
+      "car (1.7 m wide)": 93.5,
+      "two-wheeler (0.7 m)": 38.5,
+      "pedestrian (0.5 m)": 27.5,
+      "cow, head-on (0.6 m)": 33.0
+    },
+    {
+      "camera": "2 MP, 1920 px, 60\u00b0 HFOV",
+      "strategy": "full frame resized to 640 px",
+      "centre_crop_fov_deg": 60,
+      "car (1.7 m wide)": 51.9,
+      "two-wheeler (0.7 m)": 21.4,
+      "pedestrian (0.5 m)": 15.3,
+      "cow, head-on (0.6 m)": 18.3
+    },
+    {
+      "camera": "2 MP, 1920 px, 60\u00b0 HFOV",
+      "strategy": "dual-scale: full frame at 640 + native 1280 px centre crop",
+      "centre_crop_fov_deg": 40.0,
+      "car (1.7 m wide)": 155.8,
+      "two-wheeler (0.7 m)": 64.2,
+      "pedestrian (0.5 m)": 45.8,
+      "cow, head-on (0.6 m)": 55.0
+    },
+    {
+      "camera": "3 MP, 2048 px, 60\u00b0 HFOV",
+      "strategy": "full frame resized to 640 px",
+      "centre_crop_fov_deg": 60,
+      "car (1.7 m wide)": 51.9,
+      "two-wheeler (0.7 m)": 21.4,
+      "pedestrian (0.5 m)": 15.3,
+      "cow, head-on (0.6 m)": 18.3
+    },
+    {
+      "camera": "3 MP, 2048 px, 60\u00b0 HFOV",
+      "strategy": "dual-scale: full frame at 640 + native 1280 px centre crop",
+      "centre_crop_fov_deg": 37.5,
+      "car (1.7 m wide)": 166.2,
+      "two-wheeler (0.7 m)": 68.4,
+      "pedestrian (0.5 m)": 48.9,
+      "cow, head-on (0.6 m)": 58.7
+    },
+    {
+      "camera": "8 MP, 3840 px, 120\u00b0 HFOV",
+      "strategy": "full frame resized to 640 px",
+      "centre_crop_fov_deg": 120,
+      "car (1.7 m wide)": 26.0,
+      "two-wheeler (0.7 m)": 10.7,
+      "pedestrian (0.5 m)": 7.6,
+      "cow, head-on (0.6 m)": 9.2
+    },
+    {
+      "camera": "8 MP, 3840 px, 120\u00b0 HFOV",
+      "strategy": "dual-scale: full frame at 640 + native 1280 px centre crop",
+      "centre_crop_fov_deg": 40.0,
+      "car (1.7 m wide)": 155.8,
+      "two-wheeler (0.7 m)": 64.2,
+      "pedestrian (0.5 m)": 45.8,
+      "cow, head-on (0.6 m)": 55.0
+    },
+    {
+      "camera": "8 MP, 3840 px, 60\u00b0 HFOV",
+      "strategy": "full frame resized to 640 px",
+      "centre_crop_fov_deg": 60,
+      "car (1.7 m wide)": 51.9,
+      "two-wheeler (0.7 m)": 21.4,
+      "pedestrian (0.5 m)": 15.3,
+      "cow, head-on (0.6 m)": 18.3
+    },
+    {
+      "camera": "8 MP, 3840 px, 60\u00b0 HFOV",
+      "strategy": "dual-scale: full frame at 640 + native 1280 px centre crop",
+      "centre_crop_fov_deg": 20.0,
+      "car (1.7 m wide)": 311.7,
+      "two-wheeler (0.7 m)": 128.3,
+      "pedestrian (0.5 m)": 91.7,
+      "cow, head-on (0.6 m)": 110.0
+    }
+  ],
+  "camera_worked_example": {
+    "ifov_deg_per_px_native": 0.0293,
+    "car_100m_native_px": 33.2,
+    "car_100m_at_640_px": 10.4,
+    "two_wheeler_60m_native_px": 22.8
+  },
+  "fcw": {
+    "encounters": 20000,
+    "baseline_crash_rate_pct": 55.82,
+    "baseline_mean_impact_kmh": 36.8,
+    "baseline_crash_rate_wet_pct": 67.62,
+    "baseline_severe_crash_pct": 39.53,
+    "table": [
+      {
+        "threshold_s": 1.5,
+        "crash_rate_pct": 55.36,
+        "crashes_avoided_pct": 0.8,
+        "mean_impact_kmh": 35.4,
+        "crash_rate_wet_pct": 67.58,
+        "nuisance_alerts_per_hour": 0.02,
+        "nuisance_if_drivers_closer": 0.09,
+        "severe_crash_pct": 36.49
+      },
+      {
+        "threshold_s": 1.8,
+        "crash_rate_pct": 54.0,
+        "crashes_avoided_pct": 3.3,
+        "mean_impact_kmh": 34.3,
+        "crash_rate_wet_pct": 67.27,
+        "nuisance_alerts_per_hour": 0.1,
+        "nuisance_if_drivers_closer": 0.39,
+        "severe_crash_pct": 33.52
+      },
+      {
+        "threshold_s": 2.0,
+        "crash_rate_pct": 52.74,
+        "crashes_avoided_pct": 5.5,
+        "mean_impact_kmh": 33.4,
+        "crash_rate_wet_pct": 66.72,
+        "nuisance_alerts_per_hour": 0.25,
+        "nuisance_if_drivers_closer": 0.77,
+        "severe_crash_pct": 31.36
+      },
+      {
+        "threshold_s": 2.2,
+        "crash_rate_pct": 51.2,
+        "crashes_avoided_pct": 8.3,
+        "mean_impact_kmh": 32.6,
+        "crash_rate_wet_pct": 66.02,
+        "nuisance_alerts_per_hour": 0.49,
+        "nuisance_if_drivers_closer": 1.35,
+        "severe_crash_pct": 29.14
+      },
+      {
+        "threshold_s": 2.4,
+        "crash_rate_pct": 49.76,
+        "crashes_avoided_pct": 10.9,
+        "mean_impact_kmh": 31.8,
+        "crash_rate_wet_pct": 65.2,
+        "nuisance_alerts_per_hour": 0.85,
+        "nuisance_if_drivers_closer": 2.13,
+        "severe_crash_pct": 26.98
+      },
+      {
+        "threshold_s": 2.6,
+        "crash_rate_pct": 48.23,
+        "crashes_avoided_pct": 13.6,
+        "mean_impact_kmh": 30.9,
+        "crash_rate_wet_pct": 64.36,
+        "nuisance_alerts_per_hour": 1.35,
+        "nuisance_if_drivers_closer": 3.13,
+        "severe_crash_pct": 24.87
+      },
+      {
+        "threshold_s": 2.8,
+        "crash_rate_pct": 46.38,
+        "crashes_avoided_pct": 16.9,
+        "mean_impact_kmh": 30.2,
+        "crash_rate_wet_pct": 63.62,
+        "nuisance_alerts_per_hour": 1.99,
+        "nuisance_if_drivers_closer": 4.24,
+        "severe_crash_pct": 22.91
+      },
+      {
+        "threshold_s": 3.0,
+        "crash_rate_pct": 44.56,
+        "crashes_avoided_pct": 20.2,
+        "mean_impact_kmh": 29.5,
+        "crash_rate_wet_pct": 62.78,
+        "nuisance_alerts_per_hour": 2.81,
+        "nuisance_if_drivers_closer": 5.47,
+        "severe_crash_pct": 21.02
+      },
+      {
+        "threshold_s": 3.5,
+        "crash_rate_pct": 39.94,
+        "crashes_avoided_pct": 28.4,
+        "mean_impact_kmh": 27.9,
+        "crash_rate_wet_pct": 60.65,
+        "nuisance_alerts_per_hour": 5.23,
+        "nuisance_if_drivers_closer": 8.74,
+        "severe_crash_pct": 16.79
+      }
+    ],
+    "chosen_threshold_s": 2.4
+  },
+  "drowsiness": {
+    "alert_hours": 60,
+    "drowsy_segments": 120,
+    "table": [
+      {
+        "condition": "IR camera, normal",
+        "detector": "PERCLOS > 8% over 60 s",
+        "recall_pct": 100.0,
+        "false_alarms_per_hour": 19.45,
+        "median_detection_s": 126.2
+      },
+      {
+        "condition": "IR camera, normal",
+        "detector": "PERCLOS > 10% over 60 s",
+        "recall_pct": 99.2,
+        "false_alarms_per_hour": 4.5,
+        "median_detection_s": 186.7
+      },
+      {
+        "condition": "IR camera, normal",
+        "detector": "PERCLOS > 12% over 60 s",
+        "recall_pct": 87.5,
+        "false_alarms_per_hour": 0.9,
+        "median_detection_s": 251.3
+      },
+      {
+        "condition": "IR camera, normal",
+        "detector": "PERCLOS > 15% over 60 s",
+        "recall_pct": 72.5,
+        "false_alarms_per_hour": 0.0,
+        "median_detection_s": 311.4
+      },
+      {
+        "condition": "IR camera, normal",
+        "detector": "PERCLOS > 20% over 60 s",
+        "recall_pct": 35.0,
+        "false_alarms_per_hour": 0.0,
+        "median_detection_s": 373.2
+      },
+      {
+        "condition": "IR camera, normal",
+        "detector": "PERCLOS > 25% over 60 s",
+        "recall_pct": 7.5,
+        "false_alarms_per_hour": 0.0,
+        "median_detection_s": 383.3
+      },
+      {
+        "condition": "IR camera, normal",
+        "detector": "microsleep: eyes closed > 1.0 s",
+        "recall_pct": 98.3,
+        "false_alarms_per_hour": 14.78,
+        "median_detection_s": 105.8
+      },
+      {
+        "condition": "IR camera, normal",
+        "detector": "microsleep: eyes closed > 1.5 s",
+        "recall_pct": 78.3,
+        "false_alarms_per_hour": 0.48,
+        "median_detection_s": 275.1
+      },
+      {
+        "condition": "sunglasses or harsh sun",
+        "detector": "PERCLOS > 8% over 60 s",
+        "recall_pct": 100.0,
+        "false_alarms_per_hour": 60.3,
+        "median_detection_s": 70.7
+      },
+      {
+        "condition": "sunglasses or harsh sun",
+        "detector": "PERCLOS > 10% over 60 s",
+        "recall_pct": 100.0,
+        "false_alarms_per_hour": 28.6,
+        "median_detection_s": 109.1
+      },
+      {
+        "condition": "sunglasses or harsh sun",
+        "detector": "PERCLOS > 12% over 60 s",
+        "recall_pct": 100.0,
+        "false_alarms_per_hour": 10.25,
+        "median_detection_s": 171.3
+      },
+      {
+        "condition": "sunglasses or harsh sun",
+        "detector": "PERCLOS > 15% over 60 s",
+        "recall_pct": 91.7,
+        "false_alarms_per_hour": 2.5,
+        "median_detection_s": 254.6
+      },
+      {
+        "condition": "sunglasses or harsh sun",
+        "detector": "PERCLOS > 20% over 60 s",
+        "recall_pct": 55.0,
+        "false_alarms_per_hour": 0.08,
+        "median_detection_s": 323.8
+      },
+      {
+        "condition": "sunglasses or harsh sun",
+        "detector": "PERCLOS > 25% over 60 s",
+        "recall_pct": 21.7,
+        "false_alarms_per_hour": 0.0,
+        "median_detection_s": 392.6
+      },
+      {
+        "condition": "sunglasses or harsh sun",
+        "detector": "microsleep: eyes closed > 1.0 s",
+        "recall_pct": 99.2,
+        "false_alarms_per_hour": 29.82,
+        "median_detection_s": 64.7
+      },
+      {
+        "condition": "sunglasses or harsh sun",
+        "detector": "microsleep: eyes closed > 1.5 s",
+        "recall_pct": 77.5,
+        "false_alarms_per_hour": 1.63,
+        "median_detection_s": 275.8
+      },
+      {
+        "condition": "normal + head-pose gating",
+        "detector": "PERCLOS > 8% over 60 s",
+        "recall_pct": 100.0,
+        "false_alarms_per_hour": 6.78,
+        "median_detection_s": 156.2
+      },
+      {
+        "condition": "normal + head-pose gating",
+        "detector": "PERCLOS > 10% over 60 s",
+        "recall_pct": 97.5,
+        "false_alarms_per_hour": 1.17,
+        "median_detection_s": 208.9
+      },
+      {
+        "condition": "normal + head-pose gating",
+        "detector": "PERCLOS > 12% over 60 s",
+        "recall_pct": 90.0,
+        "false_alarms_per_hour": 0.18,
+        "median_detection_s": 254.5
+      },
+      {
+        "condition": "normal + head-pose gating",
+        "detector": "PERCLOS > 15% over 60 s",
+        "recall_pct": 70.0,
+        "false_alarms_per_hour": 0.0,
+        "median_detection_s": 320.9
+      },
+      {
+        "condition": "normal + head-pose gating",
+        "detector": "PERCLOS > 20% over 60 s",
+        "recall_pct": 36.7,
+        "false_alarms_per_hour": 0.0,
+        "median_detection_s": 369.1
+      },
+      {
+        "condition": "normal + head-pose gating",
+        "detector": "PERCLOS > 25% over 60 s",
+        "recall_pct": 10.8,
+        "false_alarms_per_hour": 0.0,
+        "median_detection_s": 391.4
+      },
+      {
+        "condition": "normal + head-pose gating",
+        "detector": "microsleep: eyes closed > 1.0 s",
+        "recall_pct": 96.7,
+        "false_alarms_per_hour": 1.67,
+        "median_detection_s": 190.2
+      },
+      {
+        "condition": "normal + head-pose gating",
+        "detector": "microsleep: eyes closed > 1.5 s",
+        "recall_pct": 78.3,
+        "false_alarms_per_hour": 0.08,
+        "median_detection_s": 285.4
+      },
+      {
+        "condition": "sunglasses + head-pose gating",
+        "detector": "PERCLOS > 8% over 60 s",
+        "recall_pct": 100.0,
+        "false_alarms_per_hour": 20.68,
+        "median_detection_s": 123.4
+      },
+      {
+        "condition": "sunglasses + head-pose gating",
+        "detector": "PERCLOS > 10% over 60 s",
+        "recall_pct": 98.3,
+        "false_alarms_per_hour": 4.72,
+        "median_detection_s": 190.9
+      },
+      {
+        "condition": "sunglasses + head-pose gating",
+        "detector": "PERCLOS > 12% over 60 s",
+        "recall_pct": 91.7,
+        "false_alarms_per_hour": 0.93,
+        "median_detection_s": 236.8
+      },
+      {
+        "condition": "sunglasses + head-pose gating",
+        "detector": "PERCLOS > 15% over 60 s",
+        "recall_pct": 77.5,
+        "false_alarms_per_hour": 0.08,
+        "median_detection_s": 308.5
+      },
+      {
+        "condition": "sunglasses + head-pose gating",
+        "detector": "PERCLOS > 20% over 60 s",
+        "recall_pct": 28.3,
+        "false_alarms_per_hour": 0.0,
+        "median_detection_s": 344.3
+      },
+      {
+        "condition": "sunglasses + head-pose gating",
+        "detector": "PERCLOS > 25% over 60 s",
+        "recall_pct": 4.2,
+        "false_alarms_per_hour": 0.0,
+        "median_detection_s": 391.2
+      },
+      {
+        "condition": "sunglasses + head-pose gating",
+        "detector": "microsleep: eyes closed > 1.0 s",
+        "recall_pct": 98.3,
+        "false_alarms_per_hour": 4.9,
+        "median_detection_s": 200.6
+      },
+      {
+        "condition": "sunglasses + head-pose gating",
+        "detector": "microsleep: eyes closed > 1.5 s",
+        "recall_pct": 67.5,
+        "false_alarms_per_hour": 0.15,
+        "median_detection_s": 298.6
+      }
+    ]
+  },
+  "compute": {
+    "production SoC (8 TOPS INT8)": {
+      "effective_gops": 2400.0,
+      "required_gops": 1375.2,
+      "load_pct": 57.3
+    },
+    "prototype module (~26 TOPS INT8)": {
+      "effective_gops": 7800.0,
+      "required_gops": 1375.2,
+      "load_pct": 17.6
+    }
+  },
+  "compute_table": [
+    {
+      "model": "Forward detector, YOLOv8s-class, full frame 640 px",
+      "gflops_per_inference": 28.6,
+      "fps": 15,
+      "gops_per_s": 858.0,
+      "source": "published (Ultralytics, 640 px)"
+    },
+    {
+      "model": "Forward detector, YOLOv8n-class, 1280 px centre crop",
+      "gflops_per_inference": 10.44,
+      "fps": 15,
+      "gops_per_s": 313.2,
+      "source": "scaled from 8.7 GFLOPs at 640 px"
+    },
+    {
+      "model": "Lane and road-edge segmentation (lightweight)",
+      "gflops_per_inference": 4.0,
+      "fps": 15,
+      "gops_per_s": 120.0,
+      "source": "assumed"
+    },
+    {
+      "model": "Driver face + landmarks",
+      "gflops_per_inference": 1.0,
+      "fps": 30,
+      "gops_per_s": 60.0,
+      "source": "assumed"
+    },
+    {
+      "model": "Eye-state and gaze classifier",
+      "gflops_per_inference": 0.3,
+      "fps": 30,
+      "gops_per_s": 18.0,
+      "source": "assumed"
+    },
+    {
+      "model": "Phone-use classifier",
+      "gflops_per_inference": 0.6,
+      "fps": 5,
+      "gops_per_s": 6.0,
+      "source": "assumed"
+    }
+  ],
+  "compute_note": "FLOPs counted as multiply-accumulates x2 = operations; 30% sustained NPU utilisation assumed.",
+  "power": {
+    "items": [
+      [
+        "AI SoC (NPU + CPU, typical / peak)",
+        4.5,
+        7.0
+      ],
+      [
+        "Forward camera + ISP",
+        0.6,
+        0.8
+      ],
+      [
+        "Driver camera + 940 nm IR LEDs",
+        0.8,
+        1.5
+      ],
+      [
+        "4G LTE + GNSS",
+        0.8,
+        2.5
+      ],
+      [
+        "Memory, eMMC, CAN, IMU",
+        0.6,
+        0.8
+      ],
+      [
+        "Audio amplifier + speaker",
+        0.2,
+        1.5
+      ],
+      [
+        "Power conversion losses (88% efficient)",
+        1.0,
+        1.9
+      ]
+    ],
+    "typical_w": 8.5,
+    "peak_w": 16.0,
+    "rth_c_per_w": 3.0,
+    "case_temp_typical_at_50c_cabin": 75.5,
+    "case_temp_peak_at_50c_cabin": 98.0,
+    "case_temp_parked_sun_70c_typical": 95.5
+  }
+}

@@ -1,0 +1,11 @@
+camera,strategy,centre_crop_fov_deg,car (1.7 m wide),two-wheeler (0.7 m),pedestrian (0.5 m),"cow, head-on (0.6 m)"
+"2 MP, 1920 px, 100° HFOV",full frame resized to 640 px,100.0,31.2,12.8,9.2,11.0
+"2 MP, 1920 px, 100° HFOV",dual-scale: full frame at 640 + native 1280 px centre crop,66.7,93.5,38.5,27.5,33.0
+"2 MP, 1920 px, 60° HFOV",full frame resized to 640 px,60.0,51.9,21.4,15.3,18.3
+"2 MP, 1920 px, 60° HFOV",dual-scale: full frame at 640 + native 1280 px centre crop,40.0,155.8,64.2,45.8,55.0
+"3 MP, 2048 px, 60° HFOV",full frame resized to 640 px,60.0,51.9,21.4,15.3,18.3
+"3 MP, 2048 px, 60° HFOV",dual-scale: full frame at 640 + native 1280 px centre crop,37.5,166.2,68.4,48.9,58.7
+"8 MP, 3840 px, 120° HFOV",full frame resized to 640 px,120.0,26.0,10.7,7.6,9.2
+"8 MP, 3840 px, 120° HFOV",dual-scale: full frame at 640 + native 1280 px centre crop,40.0,155.8,64.2,45.8,55.0
+"8 MP, 3840 px, 60° HFOV",full frame resized to 640 px,60.0,51.9,21.4,15.3,18.3
+"8 MP, 3840 px, 60° HFOV",dual-scale: full frame at 640 + native 1280 px centre crop,20.0,311.7,128.3,91.7,110.0

@@ -1,0 +1,1850 @@
+[
+ [
+  "p",
+  "Conceptual Design of an AI-Powered Driver Assistance System Prototype",
+  null
+ ],
+ [
+  "p",
+  "Saarthi Copilot v1: System Architecture, Hardware, Software and AI Design",
+  null
+ ],
+ [
+  "p",
+  "Automotive AI Innovation Internship (YuvaIntern)",
+  "Internship:"
+ ],
+ [
+  "p",
+  "Week 3: Conceptual Design of an AI-Powered Driver Assistance System Prototype",
+  "Task:"
+ ],
+ [
+  "p",
+  "Him Sharma",
+  "Prepared by:"
+ ],
+ [
+  "p",
+  "November 2026",
+  "Date:"
+ ],
+ [
+  "h",
+  1,
+  "1. Executive Summary"
+ ],
+ [
+  "p",
+  "This document presents the conceptual design of Saarthi Copilot v1, a prototype AI-powered driver assistance system that improves vehicle safety by warning drivers about drowsiness, distraction, forward collision risk, unsafe following distance, lane departure and overspeeding, and by flagging vehicle faults before they cause breakdowns. It turns the product concept from the Week 1 roadmap into a buildable design and applies the Week 2 feasibility findings by starting with an affordable camera-based configuration that can later grow into a full camera–radar–LiDAR fusion system.",
+  null
+ ],
+ [
+  "p",
+  "The prototype is a windscreen-mounted unit with a forward HDR camera, an infrared driver-facing camera, an edge AI processor and a read-only connection to the vehicle's OBD-II port, with an optional 77 GHz radar for commercial fleets. All perception runs on the device. Eleven software modules handle sensor acquisition, forward perception, driver monitoring, vehicle health, tracking and time-to-collision, context, risk assessment, driver interaction, event recording and system health. A hybrid decision engine combines explainable rule-based thresholds with a learned risk score and makes collision warnings earlier when the driver is drowsy. Alerts escalate through four levels using short voice messages in Hindi and English. The design targets an end-to-end warning latency of about 90 ms, fewer than one false alert per driving hour and a production bill of materials of about ₹7,500. The document also covers the justification for each AI algorithm, hardware and software choices, safety, security and privacy, limitations, future scalability and a build-and-validation plan.",
+  null
+ ],
+ [
+  "h",
+  1,
+  "2. Introduction"
+ ],
+ [
+  "h",
+  2,
+  "2.1 Purpose and Context"
+ ],
+ [
+  "p",
+  "The Week 1 roadmap defined Saarthi Copilot as an edge-AI co-pilot for Indian roads and planned 20 prototype units by Month 9. The Week 2 study concluded that AI-based sensor fusion is feasible now for driver assistance and recommended a tiered approach, starting with lower-cost sensor sets. This document is the bridge between those strategy documents and engineering work: it defines what the prototype must do, how it is built, how data moves through it, and why each technical choice was made.",
+  null
+ ],
+ [
+  "h",
+  2,
+  "2.2 Design Goals"
+ ],
+ [
+  "b",
+  [
+   [
+    "Prevent accidents, not just record them:",
+    "warn early enough for an attentive or re-alerted driver to react."
+   ],
+   [
+    "Earn the driver's trust:",
+    "few false alarms, clear and calm alerts, and no feeling of being watched beyond what safety needs."
+   ],
+   [
+    "Work in Indian conditions:",
+    "mixed traffic, unmarked roads, heat, dust, glare and patchy mobile coverage."
+   ],
+   [
+    "Stay affordable and retrofittable:",
+    "fit cars, buses and trucks already on the road."
+   ],
+   [
+    "Be ready to grow:",
+    "a modular design that can add sensors, features and vehicle control later."
+   ]
+  ]
+ ],
+ [
+  "h",
+  2,
+  "2.3 Requirements"
+ ],
+ [
+  "t",
+  "Functional requirements",
+  [
+   "ID",
+   "Functional requirement"
+  ],
+  [
+   [
+    "FR1",
+    "Detect driver drowsiness and warn before it becomes critical"
+   ],
+   [
+    "FR2",
+    "Detect distraction, including eyes off the road for more than 2 seconds and mobile phone use"
+   ],
+   [
+    "FR3",
+    "Warn of forward collision risk with vehicles, two-wheelers, pedestrians and animals"
+   ],
+   [
+    "FR4",
+    "Warn when the vehicle is following too closely (short headway)"
+   ],
+   [
+    "FR5",
+    "Warn of unintended departure from the lane or road edge, including on roads with faded or missing markings"
+   ],
+   [
+    "FR6",
+    "Recognise speed-limit signs and warn of overspeeding"
+   ],
+   [
+    "FR7",
+    "Monitor vehicle health and give early maintenance alerts"
+   ],
+   [
+    "FR8",
+    "Record safety events and upload them for fleet review, with driver consent"
+   ],
+   [
+    "FR9",
+    "Give alerts in Hindi and English, with regional languages added later"
+   ]
+  ]
+ ],
+ [
+  "t",
+  "Non-functional requirements",
+  [
+   "Attribute",
+   "Target"
+  ],
+  [
+   [
+    "Warning latency (hazard detected to alert start)",
+    "< 150 ms prototype; < 100 ms production"
+   ],
+   [
+    "Drowsiness detection recall",
+    "≥ 90% prototype; ≥ 95% at launch"
+   ],
+   [
+    "False alerts (all types combined)",
+    "< 1 per driving hour"
+   ],
+   [
+    "Operating temperature",
+    "−20 °C to +85 °C"
+   ],
+   [
+    "Supply voltage",
+    "9–36 V (12 V cars and 24 V trucks)"
+   ],
+   [
+    "Average power",
+    "< 15 W prototype; < 10 W production"
+   ],
+   [
+    "Start-up time",
+    "Ready within 15 s of ignition"
+   ],
+   [
+    "Device uptime",
+    "≥ 98%"
+   ],
+   [
+    "Production bill of materials",
+    "≤ ₹7,500 at volume"
+   ],
+   [
+    "Privacy",
+    "No continuous video leaves the vehicle; event clips only with consent"
+   ]
+  ]
+ ],
+ [
+  "h",
+  2,
+  "2.4 Scope and Assumptions"
+ ],
+ [
+  "p",
+  "Version 1 is a warning-only system: it informs the driver but never steers, brakes or accelerates. Such warning features are classed as Level 0 (no driving automation) under SAE J3016, which keeps the safety case manageable for a first product. The prototype is designed for passenger cars, light commercial vehicles, buses and trucks fitted with a standard OBD port, as provided by modern vehicles built to BS-VI emission norms.",
+  null
+ ],
+ [
+  "h",
+  1,
+  "3. Research: Existing Driver Assistance Systems and the Role of AI"
+ ],
+ [
+  "h",
+  2,
+  "3.1 Common Driver Assistance Features"
+ ],
+ [
+  "t",
+  "Common driver assistance features and the v1 scope",
+  [
+   "Feature",
+   "What it does",
+   "Typical sensors",
+   "In v1?"
+  ],
+  [
+   [
+    "Forward collision warning (FCW)",
+    "Warns of an imminent frontal collision",
+    "Camera, radar",
+    "Yes"
+   ],
+   [
+    "Automatic emergency braking (AEB)",
+    "Brakes if the driver does not respond",
+    "Camera and radar",
+    "No (needs vehicle control)"
+   ],
+   [
+    "Headway monitoring warning (HMW)",
+    "Warns when following too closely",
+    "Camera or radar",
+    "Yes"
+   ],
+   [
+    "Lane departure warning (LDW)",
+    "Warns of unintended lane departure",
+    "Camera",
+    "Yes, including road edges"
+   ],
+   [
+    "Lane keeping assist (LKA)",
+    "Steers to stay in the lane",
+    "Camera and steering actuator",
+    "No (future)"
+   ],
+   [
+    "Adaptive cruise control (ACC)",
+    "Keeps speed and gap automatically",
+    "Radar, camera",
+    "No (future)"
+   ],
+   [
+    "Blind-spot detection (BSD)",
+    "Warns of vehicles in blind spots",
+    "Rear corner radars",
+    "No (v2)"
+   ],
+   [
+    "Driver drowsiness and distraction warning",
+    "Detects a tired or inattentive driver",
+    "IR camera, steering data",
+    "Yes"
+   ],
+   [
+    "Traffic sign recognition (TSR)",
+    "Reads signs; warns of overspeeding",
+    "Camera, map",
+    "Yes (warning only)"
+   ]
+  ]
+ ],
+ [
+  "h",
+  2,
+  "3.2 How AI Has Changed Driver Assistance"
+ ],
+ [
+  "p",
+  "Early driver assistance relied on radar with hand-tuned rules. First-generation camera systems used classical computer vision: boosted cascades in the style of Viola and Jones for faces and vehicles, histogram-of-oriented-gradients features with support vector machines for pedestrians, and Hough transforms for straight lane lines. These methods worked on clean highways but struggled with changing light, clutter and unusual objects. Deep convolutional networks, which leapt ahead in image recognition from 2012, changed this: one-stage detectors such as YOLO made accurate, real-time detection possible on embedded hardware, and newer transformer and bird's-eye-view models now fuse several cameras and sensors.",
+  null
+ ],
+ [
+  "p",
+  "Driver monitoring followed a similar path, moving from indirect cues such as steering-wheel movement to infrared cameras that track the eyes, head and gaze directly. Regulation has followed: the EU General Safety Regulation requires drowsiness and attention warning, and later advanced distraction warning, in new vehicles, and Euro NCAP rewards effective driver monitoring. AI is therefore no longer an optional extra; it is the core of modern driver assistance.",
+  null
+ ],
+ [
+  "h",
+  2,
+  "3.3 Lessons Applied in This Design"
+ ],
+ [
+  "b",
+  [
+   [
+    "False alarms destroy trust:",
+    "drivers switch off systems that nag. The design uses graded alerts, driver-state-aware timing and a strict false-alert target."
+   ],
+   [
+    "Local objects matter:",
+    "models must recognise auto-rickshaws, two-wheelers with several riders, animals and hand carts, so training uses Indian data such as the India Driving Dataset (IDD) plus data collected during the pilot."
+   ],
+   [
+    "Driver monitoring adds the most value per rupee:",
+    "fatigue and distraction cause many crashes, and an in-cabin camera is cheap."
+   ],
+   [
+    "Edge processing is essential:",
+    "it gives low latency, works without mobile signal and protects privacy."
+   ],
+   [
+    "Retrofit means variety:",
+    "every vehicle has a different windscreen angle and mounting height, so automatic camera calibration is a core feature, not an afterthought."
+   ]
+  ]
+ ],
+ [
+  "h",
+  1,
+  "4. System Overview"
+ ],
+ [
+  "h",
+  2,
+  "4.1 Concept of Operation"
+ ],
+ [
+  "p",
+  "A truck driver is on the Indore–Bhopal highway at 2 a.m., ten hours into a shift. Saarthi Copilot notices that the driver's eyes are closing more often and for longer, and that the truck is drifting within its lane. It plays a soft chime and says in Hindi, \"You seem tired. Please take a break soon.\" At the same time, the decision engine starts giving collision warnings earlier than usual, because a drowsy driver reacts more slowly. Ten minutes later the driver's eyes stay closed for over a second while the truck drifts towards the road edge. The device immediately issues a loud voice warning. When this happens again, it escalates to the critical level and notifies the fleet manager, who calls the driver to arrange a rest stop. A short clip of each event is saved and later uploaded for coaching, without any continuous video ever leaving the truck.",
+  null
+ ],
+ [
+  "h",
+  2,
+  "4.2 Feature Set"
+ ],
+ [
+  "t",
+  "Feature set of Saarthi Copilot v1",
+  [
+   "Feature",
+   "What it detects",
+   "Main inputs",
+   "Alert"
+  ],
+  [
+   [
+    "Drowsiness warning",
+    "Long or frequent eye closures, yawning, head nods, lane weaving",
+    "Driver camera, lane data",
+    "Advisory → warning → critical"
+   ],
+   [
+    "Distraction warning",
+    "Eyes off road > 2 s; phone use",
+    "Driver camera",
+    "Warning"
+   ],
+   [
+    "Forward collision warning",
+    "Low time-to-collision with vehicles, two-wheelers, pedestrians, animals",
+    "Forward camera (+ radar)",
+    "Warning → critical"
+   ],
+   [
+    "Headway warning",
+    "Following distance below a safe time gap",
+    "Forward camera, vehicle speed",
+    "Advisory"
+   ],
+   [
+    "Lane / road-edge departure",
+    "Unintended drift over lane lines or road edges",
+    "Forward camera, vehicle speed",
+    "Warning"
+   ],
+   [
+    "Overspeed warning",
+    "Speed above the recognised or mapped limit",
+    "Sign recognition, map, speed",
+    "Advisory"
+   ],
+   [
+    "Vehicle health alert",
+    "Abnormal engine, battery or brake data; fault codes",
+    "OBD-II data",
+    "Information"
+   ],
+   [
+    "Event recording",
+    "Any warning or harsh event",
+    "All",
+    "Fleet dashboard"
+   ]
+  ]
+ ],
+ [
+  "h",
+  2,
+  "4.3 System Architecture"
+ ],
+ [
+  "p",
+  "Figure 1 shows the system architecture. It is organised into four layers: sensing, on-device processing, the driver interface (HMI) and connectivity to the cloud. A feedback loop runs through the driver: the sensors observe how the driver responds to each alert, and the system escalates or calms down accordingly.",
+  null
+ ],
+ [
+  "img",
+  0,
+  "System architecture of Saarthi Copilot v1"
+ ],
+ [
+  "b",
+  [
+   [
+    "Sensing layer:",
+    "a forward HDR camera, an infrared driver camera, the vehicle's OBD-II/CAN bus, GNSS and an inertial measurement unit (IMU), a microphone for voice commands and an optional 77 GHz radar."
+   ],
+   [
+    "Processing layer:",
+    "an edge AI processor runs all perception, driver monitoring, vehicle analytics and decision-making locally, with a system health module that supervises everything."
+   ],
+   [
+    "Driver interface layer:",
+    "an LED bar, a speaker for tones and voice messages, a companion phone app and, in a future OEM version, seat vibration."
+   ],
+   [
+    "Connectivity and cloud layer:",
+    "4G LTE, Bluetooth and depot Wi-Fi link the device to a cloud platform for the fleet dashboard, model training and over-the-air (OTA) updates."
+   ]
+  ]
+ ],
+ [
+  "h",
+  1,
+  "5. Hardware Design"
+ ],
+ [
+  "h",
+  2,
+  "5.1 Hardware Architecture"
+ ],
+ [
+  "p",
+  "Figure 2 shows the hardware block diagram. A single edge AI system-on-chip (SoC) sits at the centre and connects to every peripheral through standard interfaces: MIPI CSI-2 for the cameras, SPI and UART for the IMU and GNSS, a CAN controller and transceiver for the vehicle, USB or PCIe for the modem, and I²S for audio.",
+  null
+ ],
+ [
+  "img",
+  1,
+  "Hardware block diagram"
+ ],
+ [
+  "h",
+  2,
+  "5.2 Component Selection"
+ ],
+ [
+  "t",
+  "Hardware components and justification",
+  [
+   "Component",
+   "Proposed specification",
+   "Justification"
+  ],
+  [
+   [
+    "Edge AI processor",
+    "SoC with GPU/NPU; ~20–40 TOPS (prototype), ~8 TOPS automotive-grade (production)",
+    "Runs 4–5 neural networks at 15–30 fps with headroom; production part is cheaper and qualified for automotive temperatures"
+   ],
+   [
+    "Forward camera",
+    "3 MP automotive image sensor, ≥ 120 dB HDR, LED-flicker mitigation, ~60° horizontal field of view",
+    "HDR handles headlight glare and tunnels; flicker mitigation reads LED signs; 60° balances detection range and lane coverage"
+   ],
+   [
+    "Driver camera",
+    "1–2 MP global-shutter, near-infrared monochrome sensor with 940 nm LEDs",
+    "Works in darkness and through most sunglasses; global shutter avoids motion blur; 940 nm light is invisible to the driver and less affected by sunlight"
+   ],
+   [
+    "IMU",
+    "6-axis accelerometer and gyroscope",
+    "Detects harsh braking and impacts; supports ego-motion and camera calibration"
+   ],
+   [
+    "GNSS",
+    "Multi-constellation receiver including GPS and NavIC",
+    "Position, speed and map speed limits; NavIC improves coverage over India"
+   ],
+   [
+    "Vehicle interface",
+    "CAN FD transceiver; OBD-II (ISO 15765-4) and J1939 for trucks",
+    "Reads speed, RPM, temperatures and fault codes; read-only by design"
+   ],
+   [
+    "Connectivity",
+    "4G LTE Cat-1/Cat-4 modem, Bluetooth LE, Wi-Fi",
+    "Event uploads, OTA updates, phone app and bulk upload at depots"
+   ],
+   [
+    "Storage and memory",
+    "LPDDR memory; 64 GB eMMC with encryption",
+    "Loop recording of event clips; secure storage of models and logs"
+   ],
+   [
+    "Audio",
+    "Microphone, audio codec and 3 W speaker",
+    "Clear voice alerts over cabin noise; voice commands"
+   ],
+   [
+    "Power",
+    "9–36 V input, load-dump and reverse-polarity protection, supercapacitor",
+    "Fits cars and trucks; survives electrical transients; saves data safely when power is cut"
+   ],
+   [
+    "Optional radar",
+    "77 GHz front radar on a second CAN channel",
+    "Accurate distance and speed in rain, fog and darkness for fleet trucks"
+   ]
+  ]
+ ],
+ [
+  "h",
+  2,
+  "5.3 Prototype Versus Production Hardware"
+ ],
+ [
+  "p",
+  "The prototype uses a developer-friendly edge AI module with mature tools, which speeds up model development and debugging. The production version moves to an automotive-grade SoC of around 8 TOPS, which is cheaper, uses less power and is qualified for wider temperatures. Keeping the software modular, with a hardware abstraction layer between the application and the inference runtime, makes this port practical. The production bill of materials target of about ₹7,500 is broken down in Appendix A.",
+  null
+ ],
+ [
+  "h",
+  2,
+  "5.4 Power and Thermal Design"
+ ],
+ [
+  "t",
+  "Estimated power budget",
+  [
+   "Component",
+   "Typical power"
+  ],
+  [
+   [
+    "Edge AI module (prototype, high-performance mode)",
+    "10–15 W"
+   ],
+   [
+    "Forward and driver cameras",
+    "1.0–1.5 W"
+   ],
+   [
+    "IR LEDs (pulsed in sync with camera exposure)",
+    "0.5–1.0 W"
+   ],
+   [
+    "4G LTE modem (average)",
+    "1.0–2.0 W"
+   ],
+   [
+    "GNSS, IMU, CAN, audio and LEDs",
+    "0.5–1.0 W"
+   ],
+   [
+    "Total, prototype",
+    "13–20.5 W"
+   ],
+   [
+    "Target, production (automotive SoC)",
+    "< 10 W"
+   ]
+  ]
+ ],
+ [
+  "p",
+  "Heat is the hardest hardware problem in a windscreen device under the Indian sun. The unit is mounted in the shaded area behind the rear-view mirror, uses an aluminium heat spreader coupled to the mounting bracket, and pulses the IR LEDs only during camera exposure. If the processor approaches its thermal limit, a graceful-degradation policy first lowers the forward camera frame rate from 30 to 15 fps and pauses non-safety features such as sign recognition and high-quality recording, while keeping driver monitoring and collision warning active.",
+  null
+ ],
+ [
+  "h",
+  1,
+  "6. Software Design"
+ ],
+ [
+  "h",
+  2,
+  "6.1 Software Stack"
+ ],
+ [
+  "t",
+  "Software stack",
+  [
+   "Layer",
+   "Technology",
+   "Role"
+  ],
+  [
+   [
+    "Operating system",
+    "Embedded Linux (Yocto-based) with real-time kernel patches (PREEMPT_RT)",
+    "Drivers and predictable scheduling"
+   ],
+   [
+    "Camera pipeline",
+    "GStreamer and the vendor's ISP libraries",
+    "Capture, HDR processing, zero-copy buffers"
+   ],
+   [
+    "Inference runtime",
+    "TensorRT (prototype) / vendor NPU SDK (production)",
+    "Fast INT8 neural network execution"
+   ],
+   [
+    "Middleware",
+    "ROS 2 (DDS) on the prototype; lightweight shared-memory publish–subscribe in production",
+    "Messaging between modules"
+   ],
+   [
+    "Application modules",
+    "C++ for real-time modules; Python for tools and training",
+    "Perception, monitoring, decisions, HMI"
+   ],
+   [
+    "Connectivity agent",
+    "MQTT over TLS for telemetry; HTTPS for uploads",
+    "Events, health data, remote configuration"
+   ],
+   [
+    "Update and security",
+    "Secure boot, A/B partitions, signed OTA images",
+    "Safe updates with automatic rollback"
+   ],
+   [
+    "Cloud (off-device)",
+    "Containerised services, data lake, training pipeline",
+    "Fleet dashboard, model training, OTA server"
+   ]
+  ]
+ ],
+ [
+  "h",
+  2,
+  "6.2 Module Descriptions"
+ ],
+ [
+  "p",
+  "The on-device software is divided into eleven modules (M1–M11), each with a clear responsibility:",
+  null
+ ],
+ [
+  "b",
+  [
+   [
+    "M1 Acquisition and synchronisation:",
+    "captures camera frames, OBD data, GNSS and IMU samples and stamps each with a common clock so that later modules can align them."
+   ],
+   [
+    "M2 Pre-processing:",
+    "applies HDR and image signal processing, corrects lens distortion, resizes and normalises images for the neural networks, and controls IR exposure for the driver camera."
+   ],
+   [
+    "M3 Forward perception:",
+    "runs object detection, lane and road-edge detection and traffic sign recognition on forward camera frames, and estimates the distance to each object. When a radar is fitted, its object list is associated with camera detections here."
+   ],
+   [
+    "M4 Tracking and time-to-collision:",
+    "follows each object across frames, assigns stable identities, estimates relative speed and computes time-to-collision (TTC) and headway for objects in the vehicle's path."
+   ],
+   [
+    "M5 Driver monitoring:",
+    "detects the driver's face and facial landmarks, measures eye openness, blinks, yawns, head pose and gaze direction, detects phone use, and combines these into drowsiness and distraction scores."
+   ],
+   [
+    "M6 Vehicle data and health:",
+    "decodes OBD-II or J1939 signals such as speed, RPM, coolant temperature, battery voltage and fault codes, and runs anomaly detection to predict maintenance needs."
+   ],
+   [
+    "M7 Context and localisation:",
+    "estimates position and motion from GNSS and IMU data, looks up speed limits and road type from an offline map, and combines them with recognised signs and time of day."
+   ],
+   [
+    "M8 Risk assessment and decision engine:",
+    "fuses all module outputs into risk scores, applies alert thresholds that adapt to the driver's state and speed, arbitrates between simultaneous alerts and decides what to tell the driver."
+   ],
+   [
+    "M9 HMI manager:",
+    "turns decisions into LED patterns, tones and voice messages in the driver's chosen language, manages escalation and volume, and handles simple voice commands."
+   ],
+   [
+    "M10 Event recorder and connectivity:",
+    "keeps a rolling buffer of video and data, saves an encrypted clip from 10 seconds before to 10 seconds after each event, and uploads event data when connectivity allows."
+   ],
+   [
+    "M11 System health, calibration and OTA:",
+    "runs self-tests and watchdogs, detects blocked or dirty cameras, continuously refines camera calibration, and installs signed software and model updates."
+   ]
+  ]
+ ],
+ [
+  "h",
+  2,
+  "6.3 Data Flow Between Modules"
+ ],
+ [
+  "p",
+  "Figure 3 shows how data flows from the four input streams through processing to the decision engine and out to the driver and the cloud. A key cross-link is that the driver's state changes how early collision warnings are given. Table 8 lists the main messages exchanged.",
+  null
+ ],
+ [
+  "img",
+  2,
+  "Data flow between software modules"
+ ],
+ [
+  "t",
+  "Main messages between modules",
+  [
+   "Message",
+   "From → To",
+   "Rate",
+   "Content"
+  ],
+  [
+   [
+    "CameraFrame",
+    "M1/M2 → M3",
+    "30 Hz",
+    "Pre-processed forward image with timestamp"
+   ],
+   [
+    "DriverFrame",
+    "M1/M2 → M5",
+    "30 Hz",
+    "IR image of the driver with timestamp"
+   ],
+   [
+    "ObjectList",
+    "M3 → M4",
+    "30 Hz",
+    "Class, bounding box, confidence, distance estimate"
+   ],
+   [
+    "LaneModel",
+    "M3 → M8",
+    "30 Hz",
+    "Lane or road-edge curves; lateral offset of the vehicle"
+   ],
+   [
+    "TrackList",
+    "M4 → M8",
+    "30 Hz",
+    "Track ID, distance, relative speed, TTC, headway"
+   ],
+   [
+    "DriverState",
+    "M5 → M8",
+    "10 Hz",
+    "Drowsiness score, distraction flags, eyes-off-road time"
+   ],
+   [
+    "VehicleState",
+    "M6 → M8",
+    "10 Hz",
+    "Speed, RPM, health flags, fault codes"
+   ],
+   [
+    "Context",
+    "M7 → M8",
+    "1–10 Hz",
+    "Speed limit, road type, day or night, position"
+   ],
+   [
+    "Alert",
+    "M8 → M9",
+    "On event",
+    "Alert type, level, direction"
+   ],
+   [
+    "EventRecord",
+    "M8 → M10",
+    "On event",
+    "Trigger, timestamps, clip references, metadata"
+   ]
+  ]
+ ],
+ [
+  "h",
+  2,
+  "6.4 Real-Time Processing and Latency Budget"
+ ],
+ [
+  "p",
+  "Forward perception and driver monitoring run in parallel on different accelerator resources so that one never delays the other. Table 9 shows the worst-case path from a hazard appearing to an alert starting.",
+  null
+ ],
+ [
+  "t",
+  "Latency budget from hazard to alert",
+  [
+   "Stage",
+   "Time"
+  ],
+  [
+   [
+    "Frame capture and exposure (worst case at 30 fps)",
+    "33 ms"
+   ],
+   [
+    "ISP and pre-processing",
+    "7 ms"
+   ],
+   [
+    "Neural network inference (detection and lanes, INT8)",
+    "25 ms"
+   ],
+   [
+    "Tracking, distance and TTC",
+    "3 ms"
+   ],
+   [
+    "Risk assessment and decision",
+    "2 ms"
+   ],
+   [
+    "HMI: tone or voice begins",
+    "20 ms"
+   ],
+   [
+    "Total",
+    "90 ms"
+   ]
+  ]
+ ],
+ [
+  "h",
+  1,
+  "7. AI Algorithms and Justification"
+ ],
+ [
+  "h",
+  2,
+  "7.1 Selection Criteria"
+ ],
+ [
+  "p",
+  "Every algorithm was chosen against five criteria: (1) accuracy on Indian road and driver data; (2) speed on edge hardware within the latency budget; (3) explainability, so that alerts can be justified and tested; (4) robustness to lighting, weather and driver variety; and (5) the ability to improve over time through OTA updates. Where a simpler, explainable method meets the need, it is preferred over a more complex one.",
+  null
+ ],
+ [
+  "h",
+  2,
+  "7.2 Forward Perception"
+ ],
+ [
+  "p",
+  "Object detection uses a small one-stage convolutional detector from the YOLO family, quantised to INT8. Two-stage detectors such as Faster R-CNN are more accurate on small objects but too slow for the target hardware, and transformer detectors are still heavy for low-power processors. The detector is pre-trained on large public datasets and fine-tuned on the India Driving Dataset and pilot data, with classes including car, bus, truck, auto-rickshaw, motorcycle, bicycle, pedestrian and animal.",
+  null
+ ],
+ [
+  "p",
+  "Distance is estimated from a single camera using ground-plane geometry. For a camera at height H above the road with focal length f (in pixels), an object whose base appears y_b pixels in the image, with the horizon at row y_h, is at distance:",
+  null
+ ],
+ [
+  "p",
+  "Z = f · H / (y_b − y_h)     (1)",
+  null
+ ],
+ [
+  "p",
+  "This is refined with typical real-world sizes for each object class and, when fitted, replaced by radar measurements. Stereo cameras or LiDAR would be more accurate but would break the cost target, so they are left to later tiers, as recommended in Week 2.",
+  null
+ ],
+ [
+  "p",
+  "Lanes are detected with a row-anchor lane detection network in the style of Ultra Fast Lane Detection, which is extremely fast because it predicts lane positions row by row instead of classifying every pixel. Because many Indian roads have no markings, a lightweight drivable-area segmentation head on the same backbone finds road edges, so lane departure warnings still work on unmarked roads. Traffic signs are found by the main detector and classified by a small MobileNet-style classifier, pre-trained on public sign datasets such as GTSRB and fine-tuned on Indian signs.",
+  null
+ ],
+ [
+  "h",
+  2,
+  "7.3 Tracking and Collision Risk"
+ ],
+ [
+  "p",
+  "Objects are tracked with a Kalman filter and Hungarian-algorithm matching, the approach used by SORT and extended by ByteTrack to keep low-confidence detections. This is far cheaper than deep appearance-based trackers and provides the relative speed needed for collision risk. Time-to-collision is computed from distance d and closing speed v_rel, and cross-checked with the rate at which an object's image grows, which does not depend on distance estimates:",
+  null
+ ],
+ [
+  "p",
+  "TTC = d / v_rel     (2)",
+  null
+ ],
+ [
+  "p",
+  "TTC ≈ Δt / (s − 1),     where s = w(t) / w(t − Δt)     (3)",
+  null
+ ],
+ [
+  "p",
+  "Here w is the object's width in the image and Δt the time between frames. Headway is the time gap to the vehicle ahead at the current speed:",
+  null
+ ],
+ [
+  "p",
+  "Headway = d / v_ego     (4)",
+  null
+ ],
+ [
+  "h",
+  2,
+  "7.4 Driver Monitoring"
+ ],
+ [
+  "p",
+  "A lightweight face detector of the BlazeFace class finds the face in each infrared frame, and a landmark network locates points around the eyes, mouth and nose. Eye openness is measured with the eye aspect ratio (EAR), which uses six landmarks p1–p6 around each eye:",
+  null
+ ],
+ [
+  "p",
+  "EAR = ( ‖p2 − p6‖ + ‖p3 − p5‖ ) / ( 2 · ‖p1 − p4‖ )     (5)",
+  null
+ ],
+ [
+  "p",
+  "From EAR the system computes PERCLOS, the percentage of time the eyes are at least 80% closed over a rolling window T, which is one of the best-validated measures of drowsiness:",
+  null
+ ],
+ [
+  "p",
+  "PERCLOS = ( time with eyes ≥ 80% closed during T ) / T × 100%     (6)",
+  null
+ ],
+ [
+  "p",
+  "Head pose is estimated by fitting the landmarks to a 3D face model, and a gaze network estimates where the driver is looking, so eyes-off-road time can be measured as distraction regulations expect. A small object detector spots a phone near the face or hands. These features, together with blink duration, yawn frequency, head nods, lane weaving from M3 and time on task, feed a temporal classifier (a small recurrent network or gradient-boosted model) that outputs a drowsiness score from 0 to 1. Training labels come from the Karolinska Sleepiness Scale (KSS), a standard self-rating of sleepiness. Combining several validated measures is more reliable than a single PERCLOS threshold and, unlike an end-to-end video network, it can explain why an alert was raised.",
+  null
+ ],
+ [
+  "h",
+  2,
+  "7.5 Vehicle Health"
+ ],
+ [
+  "p",
+  "Labelled examples of vehicle failures are rare, so a supervised classifier is impractical. Instead, an autoencoder learns what normal OBD signal patterns look like for each vehicle, and an Isolation Forest flags unusual combinations, such as rising coolant temperature at normal load or falling battery voltage during cranking. These are combined with standard fault-code (DTC) rules to produce maintenance alerts.",
+  null
+ ],
+ [
+  "h",
+  2,
+  "7.6 Decision Engine"
+ ],
+ [
+  "p",
+  "The decision engine is deliberately hybrid. A rule-based state machine, with thresholds for TTC, headway, lane offset and eyes-off-road time, makes every alert predictable and testable. A gradient-boosted risk model, trained on pilot data, adjusts alert timing based on context such as speed, road type and traffic density. The most important adaptation is driver-state-aware timing: the collision warning threshold grows as the drowsiness score D rises, giving a tired driver more time to react:",
+  null
+ ],
+ [
+  "p",
+  "TTC_warn = TTC_base + k · D,     e.g. TTC_base = 2.5 s, k = 1.0 s, D ∈ [0, 1]     (7)",
+  null
+ ],
+ [
+  "h",
+  2,
+  "7.7 Model Optimisation for the Edge"
+ ],
+ [
+  "p",
+  "All networks use quantisation-aware training to run in INT8 with minimal accuracy loss, are pruned where possible, and are compiled with the target's inference engine. Detection, lanes and drivable area share one backbone, so the forward camera needs a single main network pass per frame.",
+  null
+ ],
+ [
+  "h",
+  2,
+  "7.8 Summary of Algorithm Choices"
+ ],
+ [
+  "t",
+  "AI algorithm choices and justification",
+  [
+   "Function",
+   "Selected approach",
+   "Alternatives considered",
+   "Why selected"
+  ],
+  [
+   [
+    "Object detection",
+    "One-stage CNN (YOLO family), INT8",
+    "Faster R-CNN; DETR",
+    "Real-time on edge hardware; mature tooling; fine-tunable for Indian classes"
+   ],
+   [
+    "Distance",
+    "Ground-plane geometry + size priors; radar if fitted",
+    "Stereo camera; LiDAR",
+    "No extra hardware; adequate for warnings; clear upgrade path"
+   ],
+   [
+    "Lanes and road edge",
+    "Row-anchor lane network + drivable-area head",
+    "Hough transform; full segmentation",
+    "Very fast; handles unmarked roads"
+   ],
+   [
+    "Signs",
+    "Detector + MobileNet-style classifier",
+    "Template matching",
+    "Robust to light and angle; easy to extend"
+   ],
+   [
+    "Tracking",
+    "Kalman filter + Hungarian matching (SORT/ByteTrack style)",
+    "Deep appearance trackers",
+    "Low compute; stable IDs; gives relative speed"
+   ],
+   [
+    "Collision risk",
+    "Physics-based TTC and headway with thresholds",
+    "End-to-end learned risk",
+    "Explainable and testable"
+   ],
+   [
+    "Face and landmarks",
+    "BlazeFace-class detector + landmark CNN",
+    "Viola–Jones cascade",
+    "Robust to head pose and IR images; a few ms per frame"
+   ],
+   [
+    "Drowsiness",
+    "EAR/PERCLOS, blinks, yawns, nods + temporal classifier (KSS labels)",
+    "Single PERCLOS threshold; end-to-end video CNN",
+    "More reliable, fewer false alarms, explainable"
+   ],
+   [
+    "Distraction",
+    "Head pose + gaze network + phone detector",
+    "Head pose only",
+    "Gaze needed for eyes-off-road timing"
+   ],
+   [
+    "Vehicle health",
+    "Autoencoder + Isolation Forest + DTC rules",
+    "Supervised failure classifier",
+    "Few labelled failures; finds unknown faults"
+   ],
+   [
+    "Decisions",
+    "Rule-based state machine + gradient-boosted risk model",
+    "Pure machine learning",
+    "Predictable and certifiable, yet adaptive"
+   ]
+  ]
+ ],
+ [
+  "h",
+  1,
+  "8. Driver Interaction Design"
+ ],
+ [
+  "h",
+  2,
+  "8.1 HMI Principles"
+ ],
+ [
+  "b",
+  [
+   [
+    "Eyes on the road:",
+    "alerts are mainly sounds and short spoken phrases, not screens to read."
+   ],
+   [
+    "Graded and calm:",
+    "the urgency of the sound matches the urgency of the risk, so serious warnings stand out."
+   ],
+   [
+    "Consistent:",
+    "each hazard always has the same sound and phrase, so drivers learn them quickly."
+   ],
+   [
+    "In the driver's language:",
+    "Hindi and English at launch, with regional languages added by OTA update."
+   ],
+   [
+    "Respectful:",
+    "advice is phrased as help, not blame, and coaching data is shared with the driver too."
+   ]
+  ]
+ ],
+ [
+  "h",
+  2,
+  "8.2 Alert Levels and Escalation"
+ ],
+ [
+  "p",
+  "Figure 4 shows the escalation logic. Alerts move up through four levels as risk grows or the driver fails to respond, and move back down when the driver responds and the risk clears. Sudden hazards, such as a vehicle cutting in, skip directly to the warning level.",
+  null
+ ],
+ [
+  "img",
+  3,
+  "Alert escalation logic"
+ ],
+ [
+  "t",
+  "Alert levels (illustrative thresholds, tuned during the pilot)",
+  [
+   "Level",
+   "Example triggers",
+   "Driver experience"
+  ],
+  [
+   [
+    "Normal",
+    "No significant risk",
+    "Green LED; silent"
+   ],
+   [
+    "Advisory",
+    "Early fatigue signs; headway below about 1.5 s; overspeeding",
+    "Amber LED; soft chime; short spoken advice"
+   ],
+   [
+    "Warning",
+    "TTC below about 2.5 s; eyes off road for more than 2 s; lane departure; phone use",
+    "Red LED; distinct tone; urgent voice message, e.g. \"Brake! Vehicle ahead\""
+   ],
+   [
+    "Critical",
+    "TTC below about 1.5 s; repeated microsleeps; no response within 3 s",
+    "Loud repeated tone and voice; fleet manager notified"
+   ]
+  ]
+ ],
+ [
+  "h",
+  2,
+  "8.3 Suppression and Personalisation Rules"
+ ],
+ [
+  "b",
+  [
+   "Collision warnings can never be muted.",
+   "Lane departure warnings are suppressed below 30 km/h and during deliberate lane changes. Where the turn indicator signal is available (OEM integration or decoded CAN data), it is used directly; otherwise deliberate changes are inferred from smooth lateral motion and yaw rate.",
+   "Advisory messages for the same cause are limited to one every few minutes to avoid nagging.",
+   "Speaker volume adapts to cabin noise measured by the microphone.",
+   "Drivers can choose the language and say \"Saarthi, repeat\" to hear the last message again. Safety alerts cannot be switched off by voice."
+  ]
+ ],
+ [
+  "h",
+  1,
+  "9. End-to-End Workflow: Data Acquisition, Processing and Response"
+ ],
+ [
+  "p",
+  "The complete workflow, from ignition to a cloud report, runs as follows:",
+  null
+ ],
+ [
+  "p",
+  "Start-up: on ignition, the device boots, runs self-tests, checks camera calibration and is ready within 15 seconds.",
+  "1."
+ ],
+ [
+  "p",
+  "Acquisition: cameras stream at 30 fps, OBD data is polled at 1–10 Hz, GNSS at 10 Hz and the IMU at 100 Hz, all timestamped against one clock.",
+  "2."
+ ],
+ [
+  "p",
+  "Pre-processing: images are corrected and resized; the IR exposure adapts to the cabin lighting.",
+  "3."
+ ],
+ [
+  "p",
+  "Perception: forward perception and driver monitoring run in parallel and publish object, lane, sign and driver-state messages.",
+  "4."
+ ],
+ [
+  "p",
+  "Interpretation: tracking computes TTC and headway; the drowsiness estimator updates the driver's score; vehicle and context data are refreshed.",
+  "5."
+ ],
+ [
+  "p",
+  "Decision: the risk engine evaluates all inputs 10–30 times per second and decides whether to raise, escalate or clear an alert.",
+  "6."
+ ],
+ [
+  "p",
+  "Response: the HMI manager plays the appropriate LED pattern, tone and voice message, and then watches for the driver's reaction.",
+  "7."
+ ],
+ [
+  "p",
+  "Recording: every alert or harsh event triggers an encrypted clip from 10 seconds before to 10 seconds after.",
+  "8."
+ ],
+ [
+  "p",
+  "Reporting: event data and trip statistics are uploaded over 4G (or depot Wi-Fi for clips) to the fleet dashboard and to the training pipeline, subject to consent.",
+  "9."
+ ],
+ [
+  "p",
+  "Table 12 traces a concrete example: a two-wheeler cuts in 12 m ahead while the car travels at 50 km/h and the two-wheeler at 30 km/h, a closing speed of about 5.6 m/s and an initial TTC of about 2.1 s.",
+  null
+ ],
+ [
+  "t",
+  "Example timeline for a two-wheeler cut-in (illustrative, assuming 6 m/s² braking)",
+  [
+   "Time",
+   "What happens"
+  ],
+  [
+   [
+    "0 ms",
+    "Two-wheeler starts cutting in 12 m ahead (TTC ≈ 2.1 s)"
+   ],
+   [
+    "≤ 33 ms",
+    "Next forward camera frame is captured"
+   ],
+   [
+    "~70 ms",
+    "Pre-processing and detection identify a motorcycle with rider"
+   ],
+   [
+    "~140 ms",
+    "Tracker confirms the object over three frames and computes TTC ≈ 2.0 s"
+   ],
+   [
+    "~145 ms",
+    "Risk engine raises a WARNING (TTC below the 2.5 s threshold)"
+   ],
+   [
+    "~165 ms",
+    "Red LED and voice alert \"Brake! Vehicle ahead\" begin"
+   ],
+   [
+    "~1.4 s",
+    "Driver brakes after a typical reaction time of about 1.2 s; gap is about 4.4 m"
+   ],
+   [
+    "~2.3 s",
+    "Car has slowed to the two-wheeler's speed with about 1.7 m to spare"
+   ]
+  ]
+ ],
+ [
+  "h",
+  1,
+  "10. Safety, Security and Privacy"
+ ],
+ [
+  "b",
+  [
+   [
+    "Functional safety:",
+    "because v1 only warns, its main hazards are missed warnings and startling false warnings. Development follows ISO 26262 practices, with safety goals for both, and an ISO 21448 (SOTIF) analysis of perception limits such as glare, fog and unusual objects."
+   ],
+   [
+    "Read-only vehicle access:",
+    "the device only sends standard diagnostic requests on the OBD port and never sends commands that could affect driving, which removes a major safety and security risk."
+   ],
+   [
+    "Cybersecurity:",
+    "secure boot, encrypted storage, signed OTA updates with rollback, TLS for all communication and regular penetration testing, aligned with UN Regulations No. 155 and No. 156."
+   ],
+   [
+    "Privacy:",
+    "in-cabin video is processed on the device and discarded; only event clips are kept, and uploads require the driver's informed consent in line with India's DPDP Act, 2023. Face data is never stored for identification unless a fleet chooses driver ID with explicit consent."
+   ]
+  ]
+ ],
+ [
+  "h",
+  1,
+  "11. Key Design Trade-offs"
+ ],
+ [
+  "t",
+  "Key design trade-offs",
+  [
+   "Decision",
+   "Chosen option",
+   "Alternative",
+   "Reason"
+  ],
+  [
+   [
+    "Where to process",
+    "On the device",
+    "Cloud inference",
+    "Latency, works without signal, privacy"
+   ],
+   [
+    "Base sensor set",
+    "Two cameras + OBD; radar optional",
+    "Camera + radar as standard",
+    "Meets ₹7,500 BOM; radar where fleets can pay"
+   ],
+   [
+    "Prototype compute",
+    "Developer AI module",
+    "Automotive SoC from day one",
+    "Faster development; port later"
+   ],
+   [
+    "Decision logic",
+    "Rules + learned risk score",
+    "End-to-end neural decisions",
+    "Explainable, testable, certifiable"
+   ],
+   [
+    "Vehicle interface",
+    "Read-only OBD",
+    "Write access to CAN",
+    "Device can never interfere with driving"
+   ],
+   [
+    "Alert style",
+    "Sound and voice first",
+    "Dashboard screen",
+    "Keeps eyes on the road; works for all literacy levels"
+   ],
+   [
+    "Data handling",
+    "Event-only upload",
+    "Continuous video upload",
+    "Privacy and mobile data cost"
+   ]
+  ]
+ ],
+ [
+  "h",
+  1,
+  "12. Potential Limitations"
+ ],
+ [
+  "b",
+  [
+   [
+    "Monocular distance error:",
+    "from Equation 1, a one-pixel error in locating an object's base causes about 1 m of error at 50 m and over 4 m at 100 m for this camera, and road slopes and vehicle pitch add more. Warnings remain reliable at the short ranges where they matter most, but long-range estimates are approximate without radar."
+   ],
+   [
+    "Weather and lighting:",
+    "heavy rain, fog and dirty windscreens reduce camera performance; the system detects these conditions and tells the driver when features are limited."
+   ],
+   [
+    "Retrofit variation:",
+    "mounting height and angle differ by vehicle; automatic calibration using the road's vanishing point and a guided setup reduce, but do not remove, installation errors."
+   ],
+   [
+    "No intervention:",
+    "v1 cannot brake or steer, so it cannot prevent a crash if the driver does not react."
+   ],
+   [
+    "Driver monitoring limits:",
+    "sunglasses that block infrared, face coverings, extreme head angles and the wide variety of faces and headwear in India can reduce accuracy, so training data must be diverse."
+   ],
+   [
+    "Vehicle data limits:",
+    "standard OBD data does not include signals such as turn indicators, and available data varies by manufacturer and vehicle age."
+   ],
+   [
+    "Thermal limits:",
+    "in extreme heat the device may reduce non-safety features to protect itself."
+   ],
+   [
+    "Data bias:",
+    "early models may perform worse in regions or conditions under-represented in the pilot."
+   ]
+  ]
+ ],
+ [
+  "h",
+  1,
+  "13. Future Scalability"
+ ],
+ [
+  "t",
+  "Scalability roadmap",
+  [
+   "Dimension",
+   "v1 Prototype",
+   "v2 Fleet product",
+   "v3 OEM integration"
+  ],
+  [
+   [
+    "Sensors",
+    "2 cameras + OBD (+ optional radar)",
+    "Front radar as standard; rear camera",
+    "Full vision–radar suite from Week 2 (6 cameras, 5 radars, 12 ultrasonic)"
+   ],
+   [
+    "Compute",
+    "~20–40 TOPS developer module",
+    "~8 TOPS automotive SoC",
+    "Central ADAS computer (100+ TOPS)"
+   ],
+   [
+    "Features",
+    "Warnings: DMS, FCW, HMW, LDW, TSR, health",
+    "+ Blind-spot and rear warnings; driver coaching",
+    "AEB, lane keeping, adaptive cruise"
+   ],
+   [
+    "Software",
+    "Models updated by OTA",
+    "Federated learning; regional languages",
+    "Licensed stack; ISO 26262 process for vehicle control"
+   ],
+   [
+    "Scale",
+    "200 pilot vehicles",
+    "25,000+ vehicles",
+    "Factory-fitted volumes"
+   ]
+  ]
+ ],
+ [
+  "p",
+  "Scalability is built into the design. A sensor abstraction layer lets new sensors be added without rewriting perception code, and the module-and-message architecture means new features, such as blind-spot warning, are added as new modules subscribing to existing data. On the cloud side, telemetry brokers and processing services scale horizontally as the fleet grows, and every deployed device feeds a data flywheel: hard cases found in the field are labelled and used to retrain models, which are then pushed back by OTA update. Longer term, the platform can integrate vehicle-to-everything (C-V2X) messages, an on-device conversational assistant, and, through OEM partnerships, the vehicle control needed for automatic emergency braking and lane keeping, following the fusion framework set out in Week 2.",
+  null
+ ],
+ [
+  "h",
+  1,
+  "14. Prototype Build and Validation Plan"
+ ],
+ [
+  "t",
+  "Build and validation plan (months follow the Week 1 roadmap)",
+  [
+   "Phase",
+   "Months",
+   "Activities",
+   "Exit criteria"
+  ],
+  [
+   [
+    "Bench prototype",
+    "4–6",
+    "Assemble compute, cameras and OBD interface; integrate all modules; replay recorded drives",
+    "All modules at ≥ 25 fps; latency < 150 ms"
+   ],
+   [
+    "Data and training",
+    "4–8",
+    "Collect and label 1,000+ hours of Indian road and cabin data; train and fine-tune models",
+    "Accuracy targets met on held-out test sets"
+   ],
+   [
+    "Vehicle integration",
+    "7–9",
+    "Install 20 prototypes in cars and trucks; tune auto-calibration and HMI",
+    "Week 1 Milestone M3: drowsiness recall ≥ 90%, latency < 150 ms"
+   ],
+   [
+    "Closed-track tests",
+    "9",
+    "Collision tests with soft targets; lane tests; distraction tasks with volunteers",
+    "Warnings within target TTC; no missed critical warnings"
+   ],
+   [
+    "Shadow-mode road tests",
+    "9–10",
+    "Run silently, log would-be alerts and review them against video",
+    "< 1 false alert per driving hour"
+   ],
+   [
+    "Fleet pilot",
+    "10–15",
+    "Deploy in 200 vehicles, as in Week 1 Phase 2",
+    "Pilot KPIs, including a 20% drop in harsh braking"
+   ]
+  ]
+ ],
+ [
+  "p",
+  "Drowsiness detection is never tested by asking tired people to drive on public roads. Instead it is trained and validated in a driving simulator with volunteers, including night-shift drivers, whose sleepiness is rated on the KSS. Collision warnings are tested on closed tracks with inflatable soft targets.",
+  null
+ ],
+ [
+  "t",
+  "Validation metrics",
+  [
+   "Metric",
+   "Prototype target"
+  ],
+  [
+   [
+    "Collision-relevant object detection recall (within 60 m)",
+    "≥ 95%"
+   ],
+   [
+    "Missed critical collision warnings in track tests",
+    "0"
+   ],
+   [
+    "Drowsiness recall (KSS ≥ 7, 'sleepy')",
+    "≥ 90%"
+   ],
+   [
+    "Eyes-off-road detection accuracy",
+    "≥ 95%"
+   ],
+   [
+    "Speed-limit sign recognition (Indian test set)",
+    "≥ 95%"
+   ],
+   [
+    "False alerts, all types",
+    "< 1 per driving hour"
+   ],
+   [
+    "End-to-end warning latency",
+    "< 150 ms"
+   ],
+   [
+    "Device uptime during pilot",
+    "≥ 98%"
+   ]
+  ]
+ ],
+ [
+  "h",
+  1,
+  "15. Conclusion"
+ ],
+ [
+  "p",
+  "Saarthi Copilot v1 turns the strategy of Week 1 and the feasibility findings of Week 2 into a concrete, buildable design. Two cameras, an edge AI processor and a read-only vehicle connection, organised into eleven clearly defined software modules, deliver drowsiness and distraction monitoring, collision and headway warnings, lane and road-edge departure warnings, overspeed alerts and vehicle health insights, all within a 90 ms response budget and an affordable bill of materials. Each AI algorithm was chosen for real-time performance, accuracy on Indian data and explainability, and the hybrid decision engine adapts its warnings to the driver's state. The design is honest about its limits, particularly monocular distance accuracy and the lack of vehicle control, and it is built to scale: by adding radar, more cameras and, eventually, vehicle control, the same architecture can grow from a warning device into a full advanced driver assistance system.",
+  null
+ ],
+ [
+  "h",
+  1,
+  "References"
+ ],
+ [
+  "p",
+  "[1]  SAE International (2021). J3016: Taxonomy and Definitions for Terms Related to Driving Automation Systems for On-Road Motor Vehicles.",
+  null
+ ],
+ [
+  "p",
+  "[2]  Regulation (EU) 2019/2144 (General Safety Regulation) and its delegated acts on driver drowsiness and attention warning and advanced driver distraction warning.",
+  null
+ ],
+ [
+  "p",
+  "[3]  Euro NCAP. Assessment Protocols – Safety Assist. European New Car Assessment Programme.",
+  null
+ ],
+ [
+  "p",
+  "[4]  Viola, P. and Jones, M. (2001). Rapid object detection using a boosted cascade of simple features. CVPR.",
+  null
+ ],
+ [
+  "p",
+  "[5]  Dalal, N. and Triggs, B. (2005). Histograms of oriented gradients for human detection. CVPR.",
+  null
+ ],
+ [
+  "p",
+  "[6]  Krizhevsky, A., Sutskever, I. and Hinton, G. E. (2012). ImageNet classification with deep convolutional neural networks. NeurIPS.",
+  null
+ ],
+ [
+  "p",
+  "[7]  Redmon, J., Divvala, S., Girshick, R. and Farhadi, A. (2016). You Only Look Once: Unified, real-time object detection. CVPR.",
+  null
+ ],
+ [
+  "p",
+  "[8]  Sandler, M., Howard, A., Zhu, M., Zhmoginov, A. and Chen, L.-C. (2018). MobileNetV2: Inverted residuals and linear bottlenecks. CVPR.",
+  null
+ ],
+ [
+  "p",
+  "[9]  Qin, Z., Wang, H. and Li, X. (2020). Ultra fast structure-aware deep lane detection. ECCV.",
+  null
+ ],
+ [
+  "p",
+  "[10]  Stallkamp, J., Schlipsing, M., Salmen, J. and Igel, C. (2012). Man vs. computer: Benchmarking machine learning algorithms for traffic sign recognition. Neural Networks, 32.",
+  null
+ ],
+ [
+  "p",
+  "[11]  Bewley, A., Ge, Z., Ott, L., Ramos, F. and Upcroft, B. (2016). Simple online and realtime tracking. ICIP.",
+  null
+ ],
+ [
+  "p",
+  "[12]  Zhang, Y. et al. (2022). ByteTrack: Multi-object tracking by associating every detection box. ECCV.",
+  null
+ ],
+ [
+  "p",
+  "[13]  Bazarevsky, V. et al. (2019). BlazeFace: Sub-millisecond neural face detection on mobile GPUs. arXiv:1907.05047.",
+  null
+ ],
+ [
+  "p",
+  "[14]  Soukupová, T. and Čech, J. (2016). Real-time eye blink detection using facial landmarks. Computer Vision Winter Workshop.",
+  null
+ ],
+ [
+  "p",
+  "[15]  Dinges, D. F. and Grace, R. (1998). PERCLOS: A valid psychophysiological measure of alertness as assessed by psychomotor vigilance. US Federal Highway Administration, FHWA-MCRT-98-006.",
+  null
+ ],
+ [
+  "p",
+  "[16]  Åkerstedt, T. and Gillberg, M. (1990). Subjective and objective sleepiness in the active individual. International Journal of Neuroscience, 52.",
+  null
+ ],
+ [
+  "p",
+  "[17]  Liu, F. T., Ting, K. M. and Zhou, Z.-H. (2008). Isolation forest. IEEE International Conference on Data Mining (ICDM).",
+  null
+ ],
+ [
+  "p",
+  "[18]  Varma, G. et al. (2019). IDD: A dataset for exploring problems of autonomous navigation in unconstrained environments. WACV.",
+  null
+ ],
+ [
+  "p",
+  "[19]  ISO 26262:2018, Road vehicles – Functional safety; ISO 21448:2022, Road vehicles – Safety of the intended functionality.",
+  null
+ ],
+ [
+  "p",
+  "[20]  ISO 15765-4, Road vehicles – Diagnostic communication over CAN; SAE J1979, E/E Diagnostic Test Modes; SAE J1939, heavy-vehicle network standards.",
+  null
+ ],
+ [
+  "p",
+  "[21]  ISO 16750-2, Road vehicles – Environmental conditions and testing for electrical and electronic equipment – Electrical loads.",
+  null
+ ],
+ [
+  "p",
+  "[22]  Government of India (2023). The Digital Personal Data Protection Act, 2023.",
+  null
+ ],
+ [
+  "p",
+  "[23]  UNECE (2021). UN Regulations No. 155 (Cyber security) and No. 156 (Software update).",
+  null
+ ],
+ [
+  "h",
+  1,
+  "Appendix A: Indicative Production Bill of Materials"
+ ],
+ [
+  "t",
+  "Indicative bill of materials at 10,000+ units per year",
+  [
+   "Item",
+   "Target cost (₹)"
+  ],
+  [
+   [
+    "Automotive-grade AI SoC module with memory (~8 TOPS)",
+    "3,200"
+   ],
+   [
+    "Forward HDR camera module",
+    "900"
+   ],
+   [
+    "Near-IR driver camera with 940 nm LEDs",
+    "800"
+   ],
+   [
+    "4G LTE and GNSS module",
+    "900"
+   ],
+   [
+    "IMU, CAN/OBD interface and power electronics",
+    "600"
+   ],
+   [
+    "64 GB eMMC storage",
+    "400"
+   ],
+   [
+    "Speaker, microphone and LED bar",
+    "200"
+   ],
+   [
+    "Enclosure, mount and cables",
+    "500"
+   ],
+   [
+    "Total",
+    "7,500"
+   ]
+  ]
+ ],
+ [
+  "p",
+  "Prototype units cost several times more because they use developer kits and small-batch parts. Costs are indicative estimates for planning, matching the Week 1 unit economics.",
+  null
+ ],
+ [
+  "h",
+  1,
+  "Appendix B: Requirements Traceability"
+ ],
+ [
+  "t",
+  "Requirements traceability matrix",
+  [
+   "Requirement",
+   "Implemented by",
+   "Verified by"
+  ],
+  [
+   [
+    "FR1 Drowsiness",
+    "M5, M8, M9",
+    "Simulator study with KSS-rated volunteers"
+   ],
+   [
+    "FR2 Distraction",
+    "M5, M8",
+    "Controlled distraction tasks on a closed track"
+   ],
+   [
+    "FR3 Forward collision",
+    "M3, M4, M8",
+    "Soft-target track tests; dataset evaluation"
+   ],
+   [
+    "FR4 Headway",
+    "M3, M4, M8",
+    "Track tests at set following distances"
+   ],
+   [
+    "FR5 Lane / road edge",
+    "M3, M8",
+    "Track and road tests, including unmarked roads"
+   ],
+   [
+    "FR6 Overspeed",
+    "M3, M7, M8",
+    "Indian sign test set; road drives"
+   ],
+   [
+    "FR7 Vehicle health",
+    "M6",
+    "Replay of OBD logs with known faults"
+   ],
+   [
+    "FR8 Event recording",
+    "M10",
+    "Pilot audit of uploads and consent records"
+   ],
+   [
+    "FR9 Languages",
+    "M9",
+    "User testing with drivers"
+   ]
+  ]
+ ],
+ [
+  "h",
+  1,
+  "Appendix C: Glossary"
+ ],
+ [
+  "t",
+  "Glossary of terms",
+  [
+   "Term",
+   "Meaning"
+  ],
+  [
+   [
+    "ADAS",
+    "Advanced driver assistance systems"
+   ],
+   [
+    "DTC",
+    "Diagnostic trouble code reported by the vehicle's computer"
+   ],
+   [
+    "EAR",
+    "Eye aspect ratio, a measure of eye openness from facial landmarks"
+   ],
+   [
+    "HDR",
+    "High dynamic range imaging, which captures bright and dark areas together"
+   ],
+   [
+    "HMI",
+    "Human–machine interface: how the system communicates with the driver"
+   ],
+   [
+    "KSS",
+    "Karolinska Sleepiness Scale, a 1–9 self-rating of sleepiness"
+   ],
+   [
+    "NavIC",
+    "India's regional satellite navigation system"
+   ],
+   [
+    "OBD-II",
+    "On-board diagnostics port and protocols for reading vehicle data"
+   ],
+   [
+    "PERCLOS",
+    "Percentage of time the eyes are at least 80% closed"
+   ],
+   [
+    "TOPS",
+    "Trillions of operations per second, a measure of AI processor speed"
+   ],
+   [
+    "TTC",
+    "Time-to-collision: time until impact if speeds stay the same"
+   ]
+  ]
+ ]
+]
